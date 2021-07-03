@@ -43,8 +43,11 @@ extern uint16_t WS2812_Buffer[WS2812_LED_NUMBER*24 + 76];
 
 
 void ws2812_init(void);
-void ws2812_set_led_rgb(uint8_t red, uint8_t green, uint8_t blue, uint16_t number);
-void ws2812_set_led_color(WS2812_Color color, uint16_t number);
+void ws2812_set_one_led_rgb(uint8_t red, uint8_t green, uint8_t blue, uint16_t number);
+void ws2812_set_one_led_color(WS2812_Color color, uint16_t number);
+void ws2812_set_all_led_rgb(uint8_t red, uint8_t green, uint8_t blue);
+void ws2812_set_all_led_color(WS2812_Color color);
+
 
 #endif
 

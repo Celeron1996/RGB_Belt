@@ -58,6 +58,172 @@ static void MX_TIM1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void display0(void)
+{
+	uint8_t number = 0;
+	uint8_t mode = 0;	
+	uint16_t counter = 0;
+	
+	while(counter < 1)
+	{
+		switch(mode)
+		{
+			case 0:ws2812_set_one_led_color(WS2812_Color_Red, number);
+				break;
+			case 1:ws2812_set_one_led_color(WS2812_Color_Green, number);
+				break;
+			case 2:ws2812_set_one_led_color(WS2812_Color_Blue, number);
+				break;
+			case 3:ws2812_set_one_led_color(WS2812_Color_Yellow, number);
+				break;
+			case 4:ws2812_set_one_led_color(WS2812_Color_White, number);
+				break;
+			case 5:ws2812_set_one_led_color(WS2812_Color_Black, number);
+				break;
+			case 6:ws2812_set_one_led_color(WS2812_Color_Snow, number);
+				break;
+			case 7:ws2812_set_one_led_color(WS2812_Color_NavyBlue, number);
+				break;
+			case 8:ws2812_set_one_led_color(WS2812_Color_LightSkyBlue, number);
+				break;
+			case 9:ws2812_set_one_led_color(WS2812_Color_DarkGreen, number);
+				break;
+			case 10:ws2812_set_one_led_color(WS2812_Color_Orange, number);
+				break;
+			case 11:ws2812_set_one_led_color(WS2812_Color_DeepPink, number);
+				break;				
+			case 12:ws2812_set_one_led_color(WS2812_Color_DarkGrey, number);
+				break;								
+		}
+		
+		HAL_Delay(20);
+		number++;
+		if(number > 30)
+		{
+			number = 0;
+			mode++;
+			if(mode > 12)
+			{
+				mode = 0;
+				counter++;
+			}
+		}		
+	}
+	ws2812_set_all_led_color(WS2812_Color_Black);
+}
+
+void display1(void)
+{
+	uint8_t number = 0;
+	uint8_t mode = 0;
+	uint8_t red = 0xff;
+	uint8_t green = 0x00;
+	uint8_t blue = 0x00;
+	uint8_t *pdata = &red;
+	uint16_t counter = 0;
+	
+	while(counter < 3)
+	{
+		ws2812_set_all_led_rgb(red, green, blue);
+		
+		if(mode == 0)
+		{
+			if(*pdata + 2 < 0xff)
+				*pdata += 2;
+			else
+			{
+				mode = 1;
+				number++;
+				*pdata -= 2;
+			}
+		}
+		else
+		{
+			if(*pdata - 2 > 0)
+				*pdata -= 2;
+			else
+			{
+				number++;
+				mode = 0;
+				*pdata += 2;
+			}
+		}
+		
+		if(number > 2)
+		{
+			number = 0;
+			counter++;
+			if(pdata == &red)
+			{
+				red = 0;
+				pdata = &green;
+			}
+			else if(pdata == &green)
+			{
+				green = 0;
+				pdata = &blue;
+			}
+			else
+			{
+				blue = 0;
+				pdata = &red;
+			}
+		}
+		
+		HAL_Delay(20);		
+	}
+}
+
+
+void display2(void)
+{
+	uint8_t number = 0;
+	uint16_t counter = 0;
+	uint8_t mode = 0;
+	WS2812_Color color = WS2812_Color_Red;
+	
+	ws2812_set_all_led_color(WS2812_Color_Black);
+	ws2812_set_one_led_color(color, number);
+	
+	while(counter < 6)
+	{
+		HAL_Delay(150);
+		ws2812_set_all_led_color(WS2812_Color_Black);
+		ws2812_set_one_led_color(color, number);
+		
+		if(mode == 0)
+		{
+			number++;
+			if(number >= WS2812_LED_NUMBER - 1)
+			{
+				mode = 1;
+				counter++;
+			}
+		}
+		else
+		{
+			number--;
+			if(number == 0)
+			{
+				mode = 0;
+				counter++;
+				switch(color)
+				{
+					case WS2812_Color_Red:color = WS2812_Color_Green;
+						break;
+					case WS2812_Color_Green:color = WS2812_Color_Blue;
+						break;
+					case WS2812_Color_Blue:color = WS2812_Color_Red;
+						break;
+					default:
+						color = WS2812_Color_Red;
+						break;
+				}
+			}
+		}
+	}
+}
+
 
 /* USER CODE END 0 */
 
@@ -68,8 +234,7 @@ static void MX_TIM1_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-		uint8_t number = 0;
-		uint8_t mode = 0;
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -110,45 +275,12 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		switch(mode)
-		{
-			case 0:ws2812_set_led_color(WS2812_Color_Red, number);
-				break;
-			case 1:ws2812_set_led_color(WS2812_Color_Green, number);
-				break;
-			case 2:ws2812_set_led_color(WS2812_Color_Blue, number);
-				break;
-			case 3:ws2812_set_led_color(WS2812_Color_Yellow, number);
-				break;
-			case 4:ws2812_set_led_color(WS2812_Color_White, number);
-				break;
-			case 5:ws2812_set_led_color(WS2812_Color_Black, number);
-				break;
-			case 6:ws2812_set_led_color(WS2812_Color_Snow, number);
-				break;
-			case 7:ws2812_set_led_color(WS2812_Color_NavyBlue, number);
-				break;
-			case 8:ws2812_set_led_color(WS2812_Color_LightSkyBlue, number);
-				break;
-			case 9:ws2812_set_led_color(WS2812_Color_DarkGreen, number);
-				break;
-			case 10:ws2812_set_led_color(WS2812_Color_Orange, number);
-				break;
-			case 11:ws2812_set_led_color(WS2812_Color_DeepPink, number);
-				break;				
-			case 12:ws2812_set_led_color(WS2812_Color_DarkGrey, number);
-				break;								
-		}
 		
-		HAL_Delay(20);
-		number++;
-		if(number > 30)
-		{
-			number = 0;
-			mode++;
-			if(mode > 12)
-				mode = 0;
-		}
+		//display0();
+		//display1();
+		display2();
+		//display0();
+		
   }
   /* USER CODE END 3 */
 }

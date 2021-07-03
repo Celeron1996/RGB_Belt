@@ -30,14 +30,14 @@ void ws2812_init(void)
 
 
 /**
-  * @brief  ws2812 set rgb of led
+  * @brief  ws2812 set rgb of one led
 	*	@param	red
 	*	@param	green
 	*	@param	blue
 	*	@param	the number of led, start for 0
   * @retval none
   */
-void ws2812_set_led_rgb(uint8_t red, uint8_t green, uint8_t blue, uint16_t number)
+void ws2812_set_one_led_rgb(uint8_t red, uint8_t green, uint8_t blue, uint16_t number)
 {
 	uint16_t index = number*24;
 	uint8_t offset = 0;
@@ -69,13 +69,46 @@ void ws2812_set_led_rgb(uint8_t red, uint8_t green, uint8_t blue, uint16_t numbe
 
 
 /**
-  * @brief  ws2812 set color of led
+  * @brief  ws2812 set color of one led
 	*	@param	color
 	*	@param	the number of led, start for 0
   * @retval none
   */
-void ws2812_set_led_color(WS2812_Color color, uint16_t number)
+void ws2812_set_one_led_color(WS2812_Color color, uint16_t number)
 {
-	ws2812_set_led_rgb((uint8_t)((color >> 16)&0x000000FF), (uint8_t)((color >> 8)&0x000000FF), (uint8_t)((color >> 0)&0x000000FF), number);
+	ws2812_set_one_led_rgb((uint8_t)((color >> 16)&0x000000FF), (uint8_t)((color >> 8)&0x000000FF), (uint8_t)((color >> 0)&0x000000FF), number);
 }
 
+
+/**
+  * @brief  ws2812 set rgb of all led
+	*	@param	red
+	*	@param	green
+	*	@param	blue
+  * @retval none
+  */
+void ws2812_set_all_led_rgb(uint8_t red, uint8_t green, uint8_t blue)
+{
+	uint16_t number;
+	
+	for(number = 0; number < WS2812_LED_NUMBER; number++)
+	{
+		ws2812_set_one_led_rgb(red, green, blue, number);
+	}
+}
+
+
+/**
+  * @brief  ws2812 set color of all led
+	*	@param	color
+  * @retval none
+  */
+void ws2812_set_all_led_color(WS2812_Color color)
+{
+	uint16_t number;
+	
+	for(number = 0; number < WS2812_LED_NUMBER; number++)
+	{
+		ws2812_set_one_led_color(color, number);
+	}
+}
