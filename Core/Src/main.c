@@ -40,14 +40,18 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+TIM_HandleTypeDef htim1;
+DMA_HandleTypeDef hdma_tim1_ch3;
 
 /* USER CODE BEGIN PV */
-
+uint16_t Buffer[74] = {0, 0, 0, 0, 54, 54, 0, 26, 26, 26, 0, 0, 0};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
+static void MX_TIM1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -85,157 +89,89 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
+  MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
+	
+	int count = 0;
+	for(count = 0; count < 8; count++)
+	{
+		Buffer[count] = 54;
+	}
+	for(;count < 16; count++)
+	{
+		Buffer[count] = 26;
+	}
+	for(;count < 24; count++)
+	{
+		Buffer[count] = 26;
+	}
+	for(;count < 74; count++)
+	{
+		Buffer[count] = 0;
+	}
 
-	ws2812_init();
-	
-	uint8_t counter = 0;
-	uint8_t mode = 0;
-	uint8_t flow = 1;
-	
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
+  if (HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_3, (uint32_t *)Buffer, 74) != HAL_OK)
+  {
+    /* Starting Error */
+    Error_Handler();
+  }
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//		ws2812_set_color(0);
 		
-		switch(mode)
+		for(count = 0; count < 8; count++)
 		{
-			case 0:
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				
-				
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();				
-				
-				
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();				
-				//ws2812_reset();
-				break;
-			case 1:
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();							
-
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				
-				
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();			
-				//ws2812_reset();
-				break;
-			case 2:
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();					
-
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();
-				WS2812_WRITE_BIT_1();		
-
-				
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();
-				WS2812_WRITE_BIT_0();					
-				//ws2812_reset();
-				break;
+			Buffer[count] = 54;
 		}
-		
-//		mode++;
-//		if(mode > 2)
-//			mode = 0;
-
-
-		
-		
-		counter++;
-		
-		if(counter >= flow)
+		for(;count < 16; count++)
 		{
-			ws2812_reset();
-			counter = 0;
-			//
-			flow++;
-			if(flow >= 31)
-			{
-				flow = 0;
-				mode++;
-				if(mode > 2)
-					mode = 0;				
-			}
-
-			HAL_Delay(20);
+			Buffer[count] = 26;
 		}
+		for(;count < 24; count++)
+		{
+			Buffer[count] = 26;
+		}		
+		
+		HAL_Delay(1000);
 		
 		
+		for(count = 0; count < 8; count++)
+		{
+			Buffer[count] = 26;
+		}
+		for(;count < 16; count++)
+		{
+			Buffer[count] = 54;
+		}
+		for(;count < 24; count++)
+		{
+			Buffer[count] = 26;
+		}				
 		
-//		HAL_Delay(10);
-//		ws2812_set_color(WS2812_Green);
-//		HAL_Delay(10);
-//		ws2812_set_color(WS2812_Blue);
-//		HAL_Delay(10);
-//		ws2812_reset();
+		HAL_Delay(1000);
 		
-//		HAL_Delay(500);
+		for(count = 0; count < 8; count++)
+		{
+			Buffer[count] = 26;
+		}
+		for(;count < 16; count++)
+		{
+			Buffer[count] = 26;
+		}
+		for(;count < 24; count++)
+		{
+			Buffer[count] = 54;
+		}				
+		
+		HAL_Delay(1000);
+		
   }
   /* USER CODE END 3 */
 }
@@ -279,27 +215,97 @@ void SystemClock_Config(void)
 }
 
 /**
+  * @brief TIM1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM1_Init(void)
+{
+
+  /* USER CODE BEGIN TIM1_Init 0 */
+
+  /* USER CODE END TIM1_Init 0 */
+
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_OC_InitTypeDef sConfigOC = {0};
+  TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig = {0};
+
+  /* USER CODE BEGIN TIM1_Init 1 */
+
+  /* USER CODE END TIM1_Init 1 */
+  htim1.Instance = TIM1;
+  htim1.Init.Prescaler = 0;
+  htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim1.Init.Period = 80;
+  htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim1.Init.RepetitionCounter = 0;
+  htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_PWM_Init(&htim1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+  sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+  if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
+  sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
+  sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
+  sBreakDeadTimeConfig.DeadTime = 0;
+  sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
+  sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
+  sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
+  if (HAL_TIMEx_ConfigBreakDeadTime(&htim1, &sBreakDeadTimeConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM1_Init 2 */
+
+  /* USER CODE END TIM1_Init 2 */
+  HAL_TIM_MspPostInit(&htim1);
+
+}
+
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Channel6_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel6_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel6_IRQn);
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
   */
 static void MX_GPIO_Init(void)
 {
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(RGB_DATA_GPIO_Port, RGB_DATA_Pin, GPIO_PIN_SET);
-
-  /*Configure GPIO pin : RGB_DATA_Pin */
-  GPIO_InitStruct.Pin = RGB_DATA_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-  HAL_GPIO_Init(RGB_DATA_GPIO_Port, &GPIO_InitStruct);
 
 }
 
