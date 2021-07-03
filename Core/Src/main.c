@@ -44,7 +44,7 @@ TIM_HandleTypeDef htim1;
 DMA_HandleTypeDef hdma_tim1_ch3;
 
 /* USER CODE BEGIN PV */
-uint16_t Buffer[74] = {0, 0, 0, 0, 54, 54, 0, 26, 26, 26, 0, 0, 0};
+uint16_t Buffer[100] = {0, 0, 0, 0, 54, 54, 0, 26, 26, 26, 0, 0, 0};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -106,7 +106,7 @@ int main(void)
 	{
 		Buffer[count] = 26;
 	}
-	for(;count < 74; count++)
+	for(;count < 100; count++)
 	{
 		Buffer[count] = 0;
 	}
@@ -115,7 +115,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  if (HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_3, (uint32_t *)Buffer, 74) != HAL_OK)
+  if (HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_3, (uint32_t *)Buffer, 100) != HAL_OK)
   {
     /* Starting Error */
     Error_Handler();
