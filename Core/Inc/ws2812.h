@@ -14,75 +14,37 @@
 #include "stm32f1xx_hal.h"
 
 
+#define WS2812_LED_NUMBER	(30u)
 
-
-#define WS2812_GPIO_PORT			GPIOA
-#define WS2812_GPIO_PIN				GPIO_PIN_10
-
-
-
-#define WS2812_WRITE_HIGH()		{WS2812_GPIO_PORT->BSRR = WS2812_GPIO_PIN;}
-#define WS2812_WRITE_LOW()		{WS2812_GPIO_PORT->BSRR = (uint32_t)WS2812_GPIO_PIN << 16u;}
-
-
-
-#define WS2812_WRITE_BIT_1()	do{\
-	WS2812_WRITE_HIGH();\
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();\
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();\
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();\
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();\
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();\
-	__NOP();__NOP();__NOP();__NOP();\
-	WS2812_WRITE_LOW();\
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();\
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();\
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();\
-	WS2812_WRITE_HIGH();\
-}while(0)
-
-#define WS2812_WRITE_BIT_0()	do{\
-	WS2812_WRITE_HIGH();\
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();\
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();\
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();\
-	WS2812_WRITE_LOW();\
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();\
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();\
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();\
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();\
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();\
-	__NOP();__NOP();__NOP();__NOP();\
-	WS2812_WRITE_HIGH();\
-}while(0)
-
-
-
+#define WS2812_PWM_VALUE_BIT_1	(54u)
+#define WS2812_PWM_VALUE_BIT_0	(26u)
 
 
 typedef enum
 {
-	WS2812_Red				= ((uint32_t)0x0000FF00),
-	WS2812_Green			= ((uint32_t)0x000000FF),
-	WS2812_Blue				= ((uint32_t)0x00FF0000),
-} WS2812_Color;
+	WS2812_Color_Red							= ((uint32_t)0x00FF0000),
+	WS2812_Color_Green						= ((uint32_t)0x0000FF00),
+	WS2812_Color_Blue							= ((uint32_t)0x000000FF),
+	WS2812_Color_Yellow						= ((uint32_t)0x00FFFF00),
+	WS2812_Color_White						= ((uint32_t)0x00FFFFFF),
+	WS2812_Color_Black						= ((uint32_t)0x00000000),
+	WS2812_Color_Snow							= ((uint32_t)0x00FFFAFA),
+	WS2812_Color_AliceBlue				= ((uint32_t)0x00F0F8FF),
+	WS2812_Color_NavyBlue					= ((uint32_t)0x00000080),
+	WS2812_Color_LightSkyBlue			= ((uint32_t)0x0087CEFA),
+	WS2812_Color_DarkGreen				= ((uint32_t)0x00006400),
+	WS2812_Color_Orange						= ((uint32_t)0x00FFA500),
+	WS2812_Color_DeepPink					= ((uint32_t)0x00FF1493),
+	WS2812_Color_DarkGrey					= ((uint32_t)0x00A9A9A9)
+}	WS2812_Color;
 
 
-
-
-
-
-
-
-
-
+extern uint16_t WS2812_Buffer[WS2812_LED_NUMBER*24 + 76];
 
 
 void ws2812_init(void);
-
-void ws2812_set_color(WS2812_Color color);
-
-void ws2812_reset(void);
+void ws2812_set_led_rgb(uint8_t red, uint8_t green, uint8_t blue, uint16_t number);
+void ws2812_set_led_color(WS2812_Color color, uint16_t number);
 
 #endif
 

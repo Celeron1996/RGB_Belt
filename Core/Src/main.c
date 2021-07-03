@@ -44,7 +44,7 @@ TIM_HandleTypeDef htim1;
 DMA_HandleTypeDef hdma_tim1_ch3;
 
 /* USER CODE BEGIN PV */
-uint16_t Buffer[100] = {0, 0, 0, 0, 54, 54, 0, 26, 26, 26, 0, 0, 0};
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -68,7 +68,8 @@ static void MX_TIM1_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+		uint8_t number = 0;
+		uint8_t mode = 0;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -93,29 +94,13 @@ int main(void)
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
 	
-	int count = 0;
-	for(count = 0; count < 8; count++)
-	{
-		Buffer[count] = 54;
-	}
-	for(;count < 16; count++)
-	{
-		Buffer[count] = 26;
-	}
-	for(;count < 24; count++)
-	{
-		Buffer[count] = 26;
-	}
-	for(;count < 100; count++)
-	{
-		Buffer[count] = 0;
-	}
-
+	ws2812_init();
+	
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  if (HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_3, (uint32_t *)Buffer, 100) != HAL_OK)
+  if (HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_3, (uint32_t *)WS2812_Buffer, (sizeof(WS2812_Buffer)/sizeof(WS2812_Buffer[0]))) != HAL_OK)
   {
     /* Starting Error */
     Error_Handler();
@@ -125,53 +110,45 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		
-		for(count = 0; count < 8; count++)
+		switch(mode)
 		{
-			Buffer[count] = 54;
+			case 0:ws2812_set_led_color(WS2812_Color_Red, number);
+				break;
+			case 1:ws2812_set_led_color(WS2812_Color_Green, number);
+				break;
+			case 2:ws2812_set_led_color(WS2812_Color_Blue, number);
+				break;
+			case 3:ws2812_set_led_color(WS2812_Color_Yellow, number);
+				break;
+			case 4:ws2812_set_led_color(WS2812_Color_White, number);
+				break;
+			case 5:ws2812_set_led_color(WS2812_Color_Black, number);
+				break;
+			case 6:ws2812_set_led_color(WS2812_Color_Snow, number);
+				break;
+			case 7:ws2812_set_led_color(WS2812_Color_NavyBlue, number);
+				break;
+			case 8:ws2812_set_led_color(WS2812_Color_LightSkyBlue, number);
+				break;
+			case 9:ws2812_set_led_color(WS2812_Color_DarkGreen, number);
+				break;
+			case 10:ws2812_set_led_color(WS2812_Color_Orange, number);
+				break;
+			case 11:ws2812_set_led_color(WS2812_Color_DeepPink, number);
+				break;				
+			case 12:ws2812_set_led_color(WS2812_Color_DarkGrey, number);
+				break;								
 		}
-		for(;count < 16; count++)
+		
+		HAL_Delay(20);
+		number++;
+		if(number > 30)
 		{
-			Buffer[count] = 26;
+			number = 0;
+			mode++;
+			if(mode > 12)
+				mode = 0;
 		}
-		for(;count < 24; count++)
-		{
-			Buffer[count] = 26;
-		}		
-		
-		HAL_Delay(1000);
-		
-		
-		for(count = 0; count < 8; count++)
-		{
-			Buffer[count] = 26;
-		}
-		for(;count < 16; count++)
-		{
-			Buffer[count] = 54;
-		}
-		for(;count < 24; count++)
-		{
-			Buffer[count] = 26;
-		}				
-		
-		HAL_Delay(1000);
-		
-		for(count = 0; count < 8; count++)
-		{
-			Buffer[count] = 26;
-		}
-		for(;count < 16; count++)
-		{
-			Buffer[count] = 26;
-		}
-		for(;count < 24; count++)
-		{
-			Buffer[count] = 54;
-		}				
-		
-		HAL_Delay(1000);
-		
   }
   /* USER CODE END 3 */
 }

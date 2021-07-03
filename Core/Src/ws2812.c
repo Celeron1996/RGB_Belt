@@ -11,47 +11,71 @@
 #include "ws2812.h"
 
 
+uint16_t WS2812_Buffer[WS2812_LED_NUMBER*24 + 76] = {0};
+
+
+/**
+  * @brief  ws2812 init led buffer ram
+  * @retval none
+  */
 void ws2812_init(void)
 {
-	HAL_GPIO_WritePin(WS2812_GPIO_PORT, WS2812_GPIO_PIN, GPIO_PIN_SET);
-	HAL_Delay(10);
-	HAL_GPIO_WritePin(WS2812_GPIO_PORT, WS2812_GPIO_PIN, GPIO_PIN_RESET);
-	HAL_Delay(10);
-	HAL_GPIO_WritePin(WS2812_GPIO_PORT, WS2812_GPIO_PIN, GPIO_PIN_SET);
-	HAL_Delay(10);
+	uint16_t count;
+	
+	for(count = 0; count < sizeof(WS2812_Buffer)/sizeof(WS2812_Buffer[0]); count++)
+	{
+		WS2812_Buffer[count] = 0;
+	}
 }
 
 
-
-
-void ws2812_set_color(WS2812_Color color)
+/**
+  * @brief  ws2812 set rgb of led
+	*	@param	red
+	*	@param	green
+	*	@param	blue
+	*	@param	the number of led, start for 0
+  * @retval none
+  */
+void ws2812_set_led_rgb(uint8_t red, uint8_t green, uint8_t blue, uint16_t number)
 {
-	uint16_t i;
-	
-	for(i = 0; i < 24; i++)
+	uint16_t index = number*24;
+	uint8_t offset = 0;
+
+	for(offset = 0; offset < 8; offset++)
 	{
-		if(color & 0x00000001)
-			WS2812_WRITE_BIT_1();
+		if(green & (0x80 >> offset))
+			WS2812_Buffer[index++] = WS2812_PWM_VALUE_BIT_1;
 		else
-			WS2812_WRITE_BIT_0();
-		color = color >> 1;
+			WS2812_Buffer[index++] = WS2812_PWM_VALUE_BIT_0;
 	}
-}
 
-
-void ws2812_reset(void)
-{
-	uint8_t i = 200;
-	
-	WS2812_WRITE_LOW();
-	while(i--)
+	for(offset = 0; offset < 8; offset++)
 	{
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();
-	__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();
-		
+		if(red & (0x80 >> offset))
+			WS2812_Buffer[index++] = WS2812_PWM_VALUE_BIT_1;
+		else
+			WS2812_Buffer[index++] = WS2812_PWM_VALUE_BIT_0;
 	}
-	WS2812_WRITE_HIGH();
+
+	for(offset = 0; offset < 8; offset++)
+	{
+		if(blue & (0x80 >> offset))
+			WS2812_Buffer[index++] = WS2812_PWM_VALUE_BIT_1;
+		else
+			WS2812_Buffer[index++] = WS2812_PWM_VALUE_BIT_0;
+	}
 }
+
+
+/**
+  * @brief  ws2812 set color of led
+	*	@param	color
+	*	@param	the number of led, start for 0
+  * @retval none
+  */
+void ws2812_set_led_color(WS2812_Color color, uint16_t number)
+{
+	ws2812_set_led_rgb((uint8_t)((color >> 16)&0x000000FF), (uint8_t)((color >> 8)&0x000000FF), (uint8_t)((color >> 0)&0x000000FF), number);
+}
+
