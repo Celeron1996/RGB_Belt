@@ -41,6 +41,9 @@ void ws2812_set_one_led_rgb(uint8_t red, uint8_t green, uint8_t blue, uint16_t n
 {
 	uint16_t index = number*24;
 	uint8_t offset = 0;
+	
+	if(number >= WS2812_LED_NUMBER)
+		return;
 
 	for(offset = 0; offset < 8; offset++)
 	{

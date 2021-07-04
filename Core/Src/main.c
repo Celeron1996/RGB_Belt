@@ -98,7 +98,7 @@ void display0(void)
 		
 		HAL_Delay(20);
 		number++;
-		if(number > 30)
+		if(number >= WS2812_LED_NUMBER)
 		{
 			number = 0;
 			mode++;
@@ -107,8 +107,9 @@ void display0(void)
 				mode = 0;
 				counter++;
 			}
-		}		
+		}
 	}
+
 	ws2812_set_all_led_color(WS2812_Color_Black);
 }
 
@@ -187,7 +188,7 @@ void display2(void)
 	
 	while(counter < 6)
 	{
-		HAL_Delay(150);
+		HAL_Delay(100);
 		ws2812_set_all_led_color(WS2812_Color_Black);
 		ws2812_set_one_led_color(color, number);
 		
@@ -276,10 +277,9 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 		
-		//display0();
-		//display1();
+		display0();
+		display1();
 		display2();
-		//display0();
 		
   }
   /* USER CODE END 3 */
